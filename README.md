@@ -1,33 +1,51 @@
-# LangChain Demo - Agent Examples
+# LangChain Agents
 
-This project demonstrates various use cases and functionality in LangChain through practical agent examples.
+LangChain-based agents using Ollama. Run from the project root with uv.
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
-- Python 3.13
-- Ollama server with access to Llama models
+- Python 3.14+
+- [uv](https://docs.astral.sh/uv/)
+- Ollama (with base URL and bearer token for your Llama setup)
 
-### Setup
+## Setup
 
-1. Clone the project
-2. Create a virtual environment and install dependencies:
+1. Clone the repo and go to the project root.
+
+2. Install dependencies and lockfile (creates/updates `uv.lock`):
+
+   ```bash
+   uv sync
+   ```
+
+   To only refresh the lockfile without installing:
+
+   ```bash
+   uv lock
+   ```
+
+3. Copy the example env file and add your values:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Edit `.env` and set `OLLAMA_BASE_URL` and `OLLAMA_BEARER_TOKEN`.
+
+## Agents
+
+| Agent | Description |
+|-------|-------------|
+| **research_agent** | Fetches a URL, summarizes the page and answers questions about it. Replies in Swedish. |
+| **lang_agent** | Fixes grammar/spelling in any language and translates text to a language you specify. |
+| **summarize_agent** | Summarizes text you paste; can output bullets or keywords. Keeps the same language as the input. |
+
+## Run
+
+From the project root (no need to activate a venv; uv runs inside its own env):
+
 ```bash
-python3.13 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-3. Create a `.env` file with your configuration:
-```bash
-OLLAMA_BASE_URL=http://nackademin.icedc.se
-OLLAMA_BEARER_TOKEN=your-bearer-token-here
-```
-
-### Running Examples
-
-Make sure the virtual environment is activated and run from the project root:
-
-```bash
-source .venv/bin/activate
-python -m examples.agent-lecture.simple_agent
+uv run research_agent.py
+uv run lang_agent.py
+uv run summarize_agent.py
 ```
