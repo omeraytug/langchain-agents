@@ -1,0 +1,77 @@
+flowchart TD
+subgraph Användare
+Start([Supportfråga])
+End1([Svar: 'Ditt paket levererades<br/>till brevlådan kl 14:23'])
+End2([Svar: 'Din order är<br/>på väg från lagret'])
+End3([Svar: 'Jag har skapat<br/>ärende #4567 för dig'])
+end
+subgraph System
+SendToLLM[Skickar fråga +<br/>tillgängliga verktyg]
+ExecOrder[Exekverar<br/>get_order_status]
+ExecDelivery[Exekverar<br/>get_delivery_info]
+ExecTicket[Exekverar<br/>create_support_ticket]
+AddContext1[Lägger resultat i kontext]
+AddContext2[Lägger resultat i kontext]
+end
+subgraph LLM
+Analyze{Analyserar frågan:<br/>Vad vill användaren?}
+PropOrder[Föreslår:<br/>get_order_status]
+PropTicket[Föreslår:<br/>create_support_ticket]
+CheckStatus{Kontrollerar status:<br/>DELIVERED?}
+PropDelivery[Föreslår:<br/>get_delivery_info]
+GenAnswer1[Genererar svar<br/>med leveransinfo]
+GenAnswer2[Genererar svar<br/>med orderstatus]
+GenAnswer3[Genererar svar<br/>om ärendet]
+end
+subgraph Verktyg
+OrderAPI[Order API<br/>→ Status]
+DeliveryAPI[Delivery API<br/>→ Leveransdetaljer]
+TicketAPI[Support System<br/>→ Ärende skapat]
+end
+Start --> SendToLLM
+SendToLLM --> Analyze
+Analyze -->|'Status på order 12345?'| PropOrder
+Analyze -->|'Paketet är skadat'| PropTicket
+PropOrder --> ExecOrder
+ExecOrder --> OrderAPI
+OrderAPI -->|status: DELIVERED| AddContext1
+OrderAPI -->|status: SHIPPED| AddContext1
+AddContext1 --> CheckStatus
+CheckStatus -->|Ja, DELIVERED| PropDelivery
+CheckStatus -->|Nej, annan status| GenAnswer2
+PropDelivery --> ExecDelivery
+ExecDelivery --> DeliveryAPI
+DeliveryAPI -->|location: brevlåda, time: 14:23| AddContext2
+AddContext2 --> GenAnswer1
+PropTicket --> ExecTicket
+ExecTicket --> TicketAPI
+TicketAPI -->|ticket_id: 4567| GenAnswer3
+GenAnswer1 --> End1
+GenAnswer2 --> End2
+GenAnswer3 --> End3
+style Analyze fill:#ffeb99
+style CheckStatus fill:#ffeb99
+style GenAnswer1 fill:#99ff99
+style GenAnswer2 fill:#99ff99
+style GenAnswer3 fill:#99ff99
+%% Blå färg för orderstatusflödet
+linkStyle 2 stroke:#0066cc,stroke-width:3px
+linkStyle 4 stroke:#0066cc,stroke-width:3px
+linkStyle 5 stroke:#0066cc,stroke-width:3px
+linkStyle 6 stroke:#0066cc,stroke-width:3px
+linkStyle 7 stroke:#0066cc,stroke-width:3px
+linkStyle 8 stroke:#0066cc,stroke-width:3px
+linkStyle 9 stroke:#0066cc,stroke-width:3px
+linkStyle 10 stroke:#0066cc,stroke-width:3px
+linkStyle 11 stroke:#0066cc,stroke-width:3px
+linkStyle 12 stroke:#0066cc,stroke-width:3px
+linkStyle 13 stroke:#0066cc,stroke-width:3px
+linkStyle 14 stroke:#0066cc,stroke-width:3px
+linkStyle 18 stroke:#0066cc,stroke-width:3px
+linkStyle 19 stroke:#0066cc,stroke-width:3px
+%% Röd färg för supportärendeflödet
+linkStyle 3 stroke:#cc0000,stroke-width:3px
+linkStyle 15 stroke:#cc0000,stroke-width:3px
+linkStyle 16 stroke:#cc0000,stroke-width:3px
+linkStyle 17 stroke:#cc0000,stroke-width:3px
+linkStyle 20 stroke:#cc0000,stroke-width:3px
